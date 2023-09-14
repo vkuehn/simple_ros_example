@@ -1,0 +1,32 @@
+# docker build -f Dockerfile_ros_publish -t ros_publish .
+FROM osrf/ros:humble-desktop
+ARG USER_HOME='/home/rosusr'
+ARG ROS_WS='/home/rosusr/ros2_ws'
+
+# potentialy needed for cpp
+RUN apt-get update && apt-get install -y \
+build-essential \
+curl \
+git \
+htop \
+libssl-dev \
+locales \
+lsb-release \
+python3-colcon-common-extensions \
+software-properties-common \
+wget \
+vim \
+xterm 
+
+# create workspace
+RUN mkdir -p "${ROS_WS}/src"
+
+# build package
+ARG PKG_NAME="minimal_publisher"
+COPY "./${PKG_NAME}" "${ROS_WS}/src/${PKG_NAME}"
+RUN cd $ROS_WS && colcon build --packages-select $PKG_NAME
+RUN chown -R rosusr:rosusr $USER_HOME
+
+# use rosusr user
+WORKDIR $ROS_WS
+USER rosusr

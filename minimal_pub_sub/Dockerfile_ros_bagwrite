@@ -1,0 +1,25 @@
+# docker build -f Dockerfile_bag_write -t ros_bagwrite .
+FROM osrf/ros:humble-desktop
+ARG USER_HOME='/home/rosusr'
+ARG ROS_WS='/home/rosusr/ros2_ws'
+
+# potentialy needed for cpp
+RUN apt-get update && apt-get install -y \
+build-essential \
+libssl-dev \
+locales \
+lsb-release \
+nfs-common \
+python3-colcon-common-extensions \
+software-properties-common \
+tmux \
+vim
+
+# create workspace
+RUN mkdir -p "${ROS_WS}/src"
+RUN mkdir -p "${USER_HOME}/bagstore"
+
+# use rosusr user
+RUN chown -R rosusr:rosusr $USER_HOME
+WORKDIR $ROS_WS
+USER rosusr
