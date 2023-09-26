@@ -1,5 +1,5 @@
-# docker build -f Dockerfile_ros_publish -t ros_publish .
-# docker run --rm --name ros_publish-running ros_publish
+# docker build -f Dockerfile_minimal_publisher -t minimal_publisher .
+# docker run --rm --name minimal_publisher-running minimal_publisher
 
 FROM osrf/ros:humble-desktop
 
@@ -35,7 +35,7 @@ RUN chmod -R 765 $ROS_WS
 RUN chown -R $USERNAME $USER_HOME
 RUN chgrp -R $USERNAME $USER_HOME
 USER $USERNAME
-# RUN cd $ROS_WS && colcon build --packages-select $PKG_NAME
+RUN cd $ROS_WS && colcon build
 
 # use rosusr user
 WORKDIR $ROS_WS
