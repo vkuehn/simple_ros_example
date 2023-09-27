@@ -20,6 +20,7 @@ libssl-dev \
 locales \
 lsb-release \
 python3-colcon-common-extensions \
+python3-rosdep2 \
 software-properties-common \
 wget \
 vim \
@@ -35,7 +36,10 @@ RUN chmod -R 765 $ROS_WS
 RUN chown -R $USERNAME $USER_HOME
 RUN chgrp -R $USERNAME $USER_HOME
 USER $USERNAME
-RUN cd $ROS_WS && colcon build
+RUN cd $ROS_WS && rosdep update
+RUN cd $ROS_WS && rosdep install -i --from-path src --rosdistro humble -y && colcon build
 
 # use rosusr user
 WORKDIR $ROS_WS
+
+# ToDo: rausfinden warum immer noch ein colcon build notwendig ist
