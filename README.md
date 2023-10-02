@@ -1,14 +1,10 @@
 # simple_ros_example
 
+eToDo: ither minimal_publisher as minimal_subscriber works fine but they currently don't find each other
+
 # simple rosbag write
 
-start somewhere here with rosbag storing
-
-sofar no custom messages
-
-...a lot to do
-
-also not sure where to get the ubuntu docker images ! 
+ToDo: start somewhere here with rosbag storing
 
 # store a rosbag on nfs
 
