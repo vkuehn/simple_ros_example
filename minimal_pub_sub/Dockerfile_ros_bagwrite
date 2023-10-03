@@ -1,25 +1,57 @@
-# docker build -f Dockerfile_bag_write -t ros_bagwrite .
+# docker build -f Dockerfile_ros_bagwrite -t ros_bagwrite .
+# docker run --rm -v ${HOME}/temp:/home/rosusr/ros2_ws/bag --name ros_bagwrite-running ros_bagwrite
 FROM osrf/ros:humble-desktop
+
+ARG USERNAME=rosusr
 ARG USER_HOME='/home/rosusr'
 ARG ROS_WS='/home/rosusr/ros2_ws'
 
-# potentialy needed for cpp
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER_HOME=${USER_HOME}
+ENV USERNAME=${USERNAME}
+# needed for ros2
+ENV ROS_DISTRO=humble
+ENV AMENT_PREFIX_PATH=/opt/ros/humble
+ENV COLCON_PREFIX_PATH=/opt/ros/humble
+ENV ROS_DOMAIN_ID=1
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_VERSION=2
+ENV ROS_WS=${ROS_WS}
+
+# ToDo: remove once humble latest is up to date as it takes far to long
+RUN apt-get update && apt-get dist-upgrade -y
+
 RUN apt-get update && apt-get install -y \
-build-essential \
-libssl-dev \
-locales \
-lsb-release \
-nfs-common \
-python3-colcon-common-extensions \
-software-properties-common \
-tmux \
-vim
+  locales \
+  && locale-gen en_US.UTF-8 \
+  && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV LANG en_US.UTF-8
+
+# none root user
+RUN useradd -ms /bin/bash $USERNAME
+RUN usermod -a -G $USERNAME $USERNAME
 
 # create workspace
-RUN mkdir -p "${ROS_WS}/src"
-RUN mkdir -p "${USER_HOME}/bagstore"
+RUN mkdir -p $ROS_WS/bag
+RUN mkdir -p $ROS_WS/src
+RUN echo  #ros2 preparation >> $USER_HOME/.bashrc
+RUN echo source /opt/ros/humble/setup.bash >> $USER_HOME/.bashrc
+RUN echo source /usr/share/colcon_cd/function/colcon_cd.sh >> $USER_HOME/.bashrc
+RUN echo export _colcon_cd_root=~/ros2_install >> $USER_HOME/.bashrc
+RUN echo export ROS_DOMAIN_ID=$ROS_DOMAIN_ID >> $USER_HOME/.bashrc
+RUN echo export ROS_PYTHON_VERSION=$ROS_PYTHON_VERSION >> $USER_HOME/.bashrc
 
 # use rosusr user
-RUN chown -R rosusr:rosusr $USER_HOME
-WORKDIR $ROS_WS
-USER rosusr
+RUN chmod -R 765 $ROS_WS
+RUN chown -R $USERNAME $USER_HOME
+RUN chgrp -R $USERNAME $USER_HOME
+WORKDIR $ROS_WS/bag
+USER $USERNAME
+RUN cd $ROS_WS && colcon build
+
+# ToDo make ros2 commandline run
+
+# CMD ["bash","source /opt/ros/humble/setup.bash && ros2 bag record -o minimal /minimal"]
+#CMD ["bash", "source $ROS_WS/install/setup.bash && ros2 topic list"]

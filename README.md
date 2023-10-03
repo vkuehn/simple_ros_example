@@ -1,10 +1,8 @@
-# simple_ros_example
+# simple_ros_examples
 
-eToDo: ither minimal_publisher as minimal_subscriber works fine but they currently don't find each other
-
-# simple rosbag write
-
-ToDo: start somewhere here with rosbag storing
+- minimal publisher
+- minimal subscriber (from minimal publisher)
+- ros bag write (from minimal publisher)
 
 # store a rosbag on nfs
 
