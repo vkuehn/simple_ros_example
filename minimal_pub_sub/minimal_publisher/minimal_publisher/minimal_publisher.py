@@ -21,6 +21,7 @@ class MinimalPublisher(Node):
 
     def __init__(self):
         super().__init__('minimal_publisher')
+        self.get_logger().info(self.get_name() + ' started')
         self.topic = 'minimal'
         self.publisher_ = self.create_publisher(String, self.topic, 10)
         timer_period = 0.5  # seconds

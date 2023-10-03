@@ -22,15 +22,14 @@ class MinimalSubscriber(Node):
 
     def __init__(self):
         super().__init__('minimal_subscriber')
+        self.get_logger().info(self.get_name() + ' started')
+        self.topic = 'minimal'
         self.subscription = self.create_subscription(
-            String,
-            'simple_topic',
-            self.listener_callback,
-            10)
+            String, self.topic, self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+        self.get_logger().info(f'Recieved: {msg.data} from {self.topic}')
 
 
 def main(args=None):
