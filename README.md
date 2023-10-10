@@ -1,8 +1,9 @@
 # simple_ros_examples
 
-- minimal publisher
-- minimal subscriber (from minimal publisher)
-- ros bag write (from minimal publisher)
+- minimal_pusub
+  - minimal publisher
+  - minimal subscriber (from minimal publisher)
+  - minimal bagwrite   (from minimal publisher)
 
 # store a rosbag on nfs
 
