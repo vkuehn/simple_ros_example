@@ -51,8 +51,5 @@ WORKDIR $ROS_WS/bag
 USER $USERNAME
 RUN cd $ROS_WS && colcon build
 
-# ToDo make ros2 commandline run
-
-# CMD ["bash","source /opt/ros/humble/setup.bash && ros2 bag record -o minimal /minimal"]
-# CMD ["bash", "source $ROS_WS/install/setup.bash && ros2 topic list"]
-# CMD ["ros2", " topic list"]
+# Command
+CMD  ["ros2", "topic", "list"]
