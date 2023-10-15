@@ -1,11 +1,16 @@
 # simple_ros_examples
 
-- minimal_pusub
-  - minimal publisher
-  - minimal subscriber (from minimal publisher)
-  - minimal bagwrite   (from minimal publisher)
+simple docker try's with ros2
 
-# store a rosbag on nfs
+- minimal_pub_sub
+  - minimal_publisher publishes hello with counting numbers to minimal topic 
+  - minimal subscriber subscribes to minimal topc and publishes the message content 
+  - minimal bagwrite   subscribes to minimal and writes all messages to a bag file otside docker
+  - minimal topics list just  shows all available ros2 topics
+
+## Howto
+
+### store a rosbag on nfs
 
 to store a rosbag file on the nfs store basically these steps has to be followed.
 
