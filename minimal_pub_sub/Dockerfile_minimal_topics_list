@@ -1,5 +1,5 @@
-# docker build -f Dockerfile_minimal_bagwrite -t minimal_bagwrite . # takes about 10 minutes !
-# docker run --rm -v ${HOME}/temp:/home/rosusr/ros2_ws/bag --name minimal_bagwrite-running minimal_bagwrite
+# docker build -f Dockerfile_minimal_topics_list -t minimal_topics_list . # takes about 10 minutes !
+# docker run --rm --name minimal_topics_list-running minimal_topics_list
 FROM osrf/ros:humble-desktop
 
 ARG USERNAME=rosusr
@@ -52,4 +52,4 @@ USER $USERNAME
 RUN cd $ROS_WS && colcon build
 
 # Command
-CMD  ["ros2", "bag", "record", "-o", "minimal", "/minimal"]
+CMD  ["ros2", "topic", "list"]
