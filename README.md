@@ -1,16 +1,16 @@
-# simple_ros_example
+# simple_ros_examples
 
-# simple rosbag write
+simple docker try's with ros2
 
-start somewhere here with rosbag storing
+- minimal_pub_sub
+  - minimal_publisher publishes hello with counting numbers to minimal topic 
+  - minimal subscriber subscribes to minimal topc and publishes the message content 
+  - minimal bagwrite   subscribes to minimal and writes all messages to a bag file otside docker
+  - minimal topics list just  shows all available ros2 topics
 
-sofar no custom messages
+## Howto
 
-...a lot to do
-
-also not sure where to get the ubuntu docker images ! 
-
-# store a rosbag on nfs
+### store a rosbag on nfs
 
 to store a rosbag file on the nfs store basically these steps has to be followed.
 

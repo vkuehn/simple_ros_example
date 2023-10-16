@@ -1,0 +1,80 @@
+# docker build -f Dockerfile_minimal_publisher -t minimal_publisher .
+# docker run --rm --name minimal_publisher-running minimal_publisher
+
+FROM osrf/ros:humble-desktop
+
+ARG USERNAME=rosusr
+ARG USER_HOME='/home/rosusr'
+ARG PKG_NAME='minimal_publisher'
+ARG ROS_WS='/home/rosusr/ros2_ws'
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER_HOME=${USER_HOME}
+ENV USERNAME=${USERNAME}
+# needed for ros2
+ENV ROS_DISTRO=humble
+ENV AMENT_PREFIX_PATH=/opt/ros/humble
+ENV COLCON_PREFIX_PATH=/opt/ros/humble
+ENV PKG_NAME=${PKG_NAME}
+ENV ROS_DOMAIN_ID=1
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_VERSION=2
+ENV ROS_WS=${ROS_WS}
+
+# ToDo: remove once humble latest is up to date as it takes far to long
+RUN apt-get update && apt-get dist-upgrade -y
+
+RUN apt-get update && apt-get install -y \
+  locales \
+  && locale-gen en_US.UTF-8 \
+  && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV LANG en_US.UTF-8
+
+RUN apt-get update && apt-get install -y \
+  bash-completion \
+  build-essential \
+  cmake \
+  curl \
+  gdb \
+  htop \
+  libssl-dev \
+  lsb-release \
+  python3-argcomplete \
+  python3-colcon-common-extensions \
+  python3-rosdep2 \
+  python3-pip \
+  vim \
+  xterm \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN rosdep init || echo "rosdep already initialized"
+
+# none root user
+RUN useradd -ms /bin/bash $USERNAME
+RUN usermod -a -G $USERNAME $USERNAME
+
+# create workspace
+RUN mkdir -p $ROS_WS/src
+RUN echo  #ros2 preparation >> $USER_HOME/.bashrc
+RUN echo source /opt/ros/humble/setup.bash >> $USER_HOME/.bashrc
+RUN echo source /usr/share/colcon_cd/function/colcon_cd.sh >> $USER_HOME/.bashrc
+RUN echo export _colcon_cd_root=~/ros2_install >> $USER_HOME/.bashrc
+RUN echo export ROS_DOMAIN_ID=$ROS_DOMAIN_ID >> $USER_HOME/.bashrc
+RUN echo export ROS_PYTHON_VERSION=$ROS_PYTHON_VERSION >> $USER_HOME/.bashrc
+
+# build package
+COPY "./${PKG_NAME}" "${ROS_WS}/src/${PKG_NAME}"
+RUN chmod -R 765 $ROS_WS
+RUN chown -R $USERNAME $USER_HOME
+RUN chgrp -R $USERNAME $USER_HOME
+USER $USERNAME
+RUN cd $ROS_WS && rosdep update >> $USER_HOME/install.log
+RUN cd $ROS_WS && rosdep install -i --from-path src --rosdistro humble -y >> $USER_HOME/install.log
+RUN cd $ROS_WS && colcon build >> $USER_HOME/install.log
+
+# use rosusr user
+WORKDIR $ROS_WS
+
+CMD ["bash", "-c", "source $ROS_WS/install/setup.bash && ros2 run $PKG_NAME $PKG_NAME"]
